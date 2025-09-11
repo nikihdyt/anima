@@ -1,17 +1,22 @@
-//
-//  animaApp.swift
-//  anima
-//
-//  Created by Niki Hidayati on 10/09/25.
-//
-
 import SwiftUI
 
 @main
 struct animaApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ListScreen()
         }
+    }
+}
+
+extension Color {
+    init(_ hex: Int, opacity: Double = 1) {
+        self.init(
+            .sRGB,
+            red: Double((hex >> 16) & 0xff) / 255,
+            green: Double((hex >> 08) & 0xff) / 255,
+            blue: Double((hex >> 00) & 0xff) / 255,
+            opacity: opacity
+        )
     }
 }
