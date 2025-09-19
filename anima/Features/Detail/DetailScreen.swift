@@ -15,8 +15,19 @@ struct DetailScreen: View {
       if tab == 0 {
         ZStack {
           RoundedRectangle(cornerRadius: 16).fill(.quaternary)
-          ExamplePreview(example: vm.example, params: vm.params)
-            .padding()
+            switch vm.example.renderer {
+            case "dragGesture":
+                dragGesture()
+                    .padding()
+            case "orb1":
+                Orb1()
+                    .padding()
+            case "gradient sphere":
+                Timeline_Gradient3()
+            default :
+                ExamplePreview(example: vm.example, params: vm.params)
+                  .padding()
+            }
         }
         .frame(maxWidth: .infinity, minHeight: 280)
 
@@ -45,6 +56,7 @@ struct DetailScreen: View {
           Button("Reset") { vm.reset() }
         }
       } else {
+//          MarkdownReader.extractCode(from: vm.example.codeSwift)
         ScrollView {
           Text(vm.example.codeSwift)
             .textSelection(.enabled)

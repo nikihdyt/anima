@@ -2,10 +2,13 @@ import Foundation
 
 //enum Framework: String, Codable { case swiftUI, coreAnimation }
 
+//enum AnimationDemo: String, Codable { case dragGestures, pyhsics, orb }
+
 struct AnimationItemModel: Identifiable, Codable, Equatable, Hashable {
     var id: String
     var title: String
     let summary: String
+    let renderer: String
     let framework: String
     let tags: [String]
     let codeSwift: String

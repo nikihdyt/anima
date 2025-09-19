@@ -1,67 +1,32 @@
     [
       {
-        "id": "bounce-001",
-        "title": "Bounce",
-        "summary": "A simple bouncy scale animation.",
+        "id": "drag-001",
+        "title": "Drag Gesture",
+        "summary": "",
         "framework": "swiftUI",
-        "tags": ["bounce", "spring", "scale"],
-        "codeSwift": "struct Demo: View { @State var on=false; var body: some View { Circle().scaleEffect(on ? 1.2 : 1.0).animation(.spring(dampingFraction: 0.5), value: on).onTapGesture { on.toggle() } } }",
-        "controlSpecs": [
-          {
-            "id": "damping",
-            "key": "damping",
-            "title": "Damping",
-            "kind": "slider",
-            "min": 0.1,
-            "max": 1.0,
-            "step": 0.05,
-            "options": null,
-            "defaultValue": 0.5
-          },
-          {
-            "id": "enabled",
-            "key": "enabled",
-            "title": "Enabled",
-            "kind": "toggle",
-            "min": null,
-            "max": null,
-            "step": null,
-            "options": null,
-            "defaultValue": 1.0
-          }
-        ]
+        "renderer": "dragGesture",
+        "tags": ["gesture", "spring", "gradient"],
+        "codeSwift": "```swift\nstruct dragGesture: View {\n    @State private var dragAmount = CGSize.zero\n    @State private var finalAmount = CGSize.zero\n    \n    var body: some View {\n        MeshGradient(width: 2, height: 2, points: [\n            [0, 0], [0, 1], [0.7, 0], [1, 1] ], colors: [.blue, .purple, .pink, .red])\n        .background(.orange)\n        .frame(width: 300, height: 200)\n        .clipShape(.rect(cornerRadius: 20))\n        .offset(x: finalAmount.width + dragAmount.width,\n                y: finalAmount.height + dragAmount.height)\n        .gesture(\n            DragGesture()\n                .onChanged{ dragAmount = $0.translation }\n                .onEnded{ _ in\n                    finalAmount.width += dragAmount.width\n                    finalAmount.height += dragAmount.height\n                    dragAmount = .zero\n                }\n        )\n        .animation(.spring, value: dragAmount)\n    }\n}\n```",
+        "controlSpecs": []
       },
       {
-        "id": "fade-001",
-        "title": "Fade",
-        "summary": "Basic opacity animation.",
-        "framework": "coreAnimation",
-        "tags": ["fade", "opacity"],
-        "codeSwift": "import UIKit\n// CA animation sample here…",
-        "controlSpecs": [
-          {
-            "id": "duration",
-            "key": "duration",
-            "title": "Duration",
-            "kind": "slider",
-            "min": 0.0,
-            "max": 2.0,
-            "step": 0.1,
-            "options": null,
-            "defaultValue": 0.3
-          },
-          {
-            "id": "curve",
-            "key": "curve",
-            "title": "Curve",
-            "kind": "picker",
-            "min": null,
-            "max": null,
-            "step": null,
-            "options": ["easeIn", "easeOut", "linear"],
-            "defaultValue": null
-          }
-        ]
+        "id": "orb-001",
+        "title": "Orb",
+        "summary": "",
+        "framework": "swiftUI",
+        "renderer": "orb1",
+        "tags": ["gradient", "scaleEffect"],
+        "codeSwift": "```TimelineView(.animation) { timeline in\n    let seconds = timeline.date.timeIntervalSince1970\n    \n    ZStack {\n        // Background glow\n        Circle()\n            .fill(RadialGradient(\n                colors: [.blue.opacity(0.2), .clear],\n                center: .center,\n                startRadius: 0,\n                endRadius: 60\n            ))\n            .scaleEffect(1.5)\n        \n        // Core orb\n        Circle()\n            .fill(RadialGradient(\n                colors: [\n                    .white,\n                    .cyan,\n                    .blue.opacity(0.5),\n                    .purple.opacity(0.2)\n                ],\n                center: UnitPoint(x: 0.3, y: 0.3),\n                startRadius: 0,\n                endRadius: 35\n            ))\n            .frame(width: 50, height: 50)\n            .scaleEffect(sin(seconds * 2) * 0.15 + 1.0)\n        \n        // Floating particles\n        ForEach(0..<12, id: \\.self) { i in\n            Circle()\n                .fill(Color.white.opacity(0.9))\n                .frame(width: 2, height: 2)\n                .offset(\n                    x: cos(seconds * 1.5 + Double(i) * 0.5) * 40,\n                    y: sin(seconds * 1.2 + Double(i) * 0.7) * 35\n                )\n                .scaleEffect(sin(seconds * 3 + Double(i)) * 0.5 + 1)\n                .opacity(sin(seconds * 2 + Double(i) * 0.3) * 0.4 + 0.6)\n        }\n    }\n    .frame(width: objectSize.width, height: objectSize.height)\n    .clipShape(.circle)\n    .shadow(color: .cyan, radius: 15, x: 0, y: 0)\n}```",
+        "controlSpecs": []
+      },
+      {
+        "id": "sphere-001",
+        "title": "Gradient sphere",
+        "summary": "",
+        "framework": "swiftUI",
+        "renderer": "gradient sphere",
+        "tags": ["gradient", "physics"],
+        "codeSwift": "```struct Timeline_Gradient3: View {\n    @State private var dragAmount = CGSize.zero\n    @State private var finalAmount = CGSize.zero\n    @State private var velocity = CGSize.zero\n    @State private var isAnimating = false\n    \n    let containerSize: CGSize = CGSize(width: 300, height: 500)\n    let objectSize: CGSize = CGSize(width: 50, height: 50)\n    \n    // Physics parameters\n    let damping: Double = 0.8\n    let bounciness: Double = 0.7\n    let gravity: Double = 0.2\n    let friction: Double = 0.99\n    \n    var body: some View {\n        Rectangle()\n            .stroke(.orange, lineWidth: 4)\n            .frame(width: containerSize.width, height: containerSize.height)\n            .overlay(\n                TimelineView(.animation) { timeline in\n                    let seconds = timeline.date.timeIntervalSince1970\n                    \n                    MeshGradient(width: 2, height: 2, points: [\n                        [0, 0], [0, 1], [1, 0], [1, 1] ], colors: [.blue, .purple, .pink, .red])\n                    .rotationEffect(.degrees(seconds * 100))\n                    .frame(width: objectSize.width, height: objectSize.height)\n                    .clipShape(.circle)\n                    .offset(x: finalAmount.width + dragAmount.width,\n                            y: finalAmount.height + dragAmount.height)\n                    .gesture(\n                        DragGesture()\n                            .onChanged{ value in\n                                if !isAnimating {\n                                    dragAmount = value.translation\n                                }\n                            }\n                            .onEnded{ value in\n                                velocity = CGSize(\n                                           width: value.translation.width * 0.1,\n                                                                    height: value.translation.height * 0.1\n                                )\n                                finalAmount.width += dragAmount.width\n                                finalAmount.height += dragAmount.height\n                                dragAmount = .zero\n                                \n                                startAdvancedPhysics()\n                            }\n                    )\n                    .animation(.spring(response: 0.3, dampingFraction: 0.8), value: dragAmount)\n                }\n            )\n            .clipped()\n    }\n    \n    private func startAdvancedPhysics() {\n        guard !isAnimating else { return }\n        isAnimating = true\n        \n        Timer.scheduledTimer(withTimeInterval: 1/60, repeats: true) { timer in\n            // Apply gravity (hanya ke Y)\n            velocity.height += gravity\n            \n            // Apply friction\n            velocity.width *= friction\n            velocity.height *= friction\n            \n            // Update position\n            finalAmount.width += velocity.width\n            finalAmount.height += velocity.height\n            \n            // Boundaries\n            let maxX = (containerSize.width - objectSize.width) / 2\n            let maxY = (containerSize.height - objectSize.height) / 2\n            let minX = -maxX\n            let minY = -maxY\n            \n            if finalAmount.width > maxX {\n                finalAmount.width = maxX\n                velocity.width = -velocity.width * bounciness\n                velocity.width += Double.random(in: -0.5...0.5)\n            } else if finalAmount.width < minX {\n                finalAmount.width = minX\n                velocity.width = -velocity.width * bounciness\n                velocity.width += Double.random(in: -0.5...0.5)\n            }\n            \n            if finalAmount.height > maxY {\n                finalAmount.height = maxY\n                velocity.height = -velocity.height * bounciness\n                velocity.height += Double.random(in: -0.5...0.5)\n            } else if finalAmount.height < minY {\n                finalAmount.height = minY\n                velocity.height = -velocity.height * bounciness\n                velocity.height += Double.random(in: -0.5...0.5)\n            }\n            \n            if abs(velocity.width) < 0.2 && abs(velocity.height) < 0.2 &&\n               finalAmount.height >= maxY - 1 {\n                timer.invalidate()\n                isAnimating = false\n                velocity = .zero\n                finalAmount.height = maxY\n            }\n        }\n    }\n\n\n}```",
+        "controlSpecs": []
       }
     ]
-

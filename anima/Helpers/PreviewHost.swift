@@ -37,6 +37,7 @@ extension AnimationItemModel {
       id: "spring-scale",
       title: "Spring Scale",
       summary: "Tap to scale with spring",
+      renderer: "dragGestures",
       framework: "swiftUI",
       tags: ["spring","scale"],
       codeSwift: "",
